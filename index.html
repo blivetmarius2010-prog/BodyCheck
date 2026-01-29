@@ -37,19 +37,32 @@ h1{text-align:center}
 
 section{margin-top:22px}
 h2{margin-bottom:10px}
-h3{margin:14px 0 8px;font-size:1em;opacity:.85}
 
-.block{
-  margin-bottom:10px;
-  padding:12px;
-  border-radius:16px;
+.question{
   background:rgba(0,0,0,.35);
+  padding:12px;
+  border-radius:14px;
+  margin-bottom:10px;
 }
 
-.block label{display:block;margin-bottom:6px}
-.block input{width:100%}
+.question p{margin-bottom:8px}
 
-.value{text-align:center;font-size:.9em;margin-top:4px}
+.answers button{
+  width:100%;
+  margin-top:6px;
+  padding:8px;
+  border:none;
+  border-radius:10px;
+  background:rgba(255,255,255,.15);
+  color:white;
+  cursor:pointer;
+}
+
+.answers button.active{
+  background:linear-gradient(135deg,#22c55e,#38bdf8);
+  color:#020617;
+  font-weight:bold;
+}
 
 .bar{
   width:100%;
@@ -75,9 +88,7 @@ h3{margin:14px 0 8px;font-size:1em;opacity:.85}
   background:rgba(0,0,0,.3);
 }
 
-ul{padding-left:18px;margin-top:6px}
-
-button{
+button.reset{
   margin-top:16px;
   width:100%;
   padding:12px;
@@ -101,133 +112,144 @@ button{
 
 <div class="app">
 <h1>🧠 BodyCheck</h1>
-<p class="subtitle">Évalue ton état physique et mental</p>
+<p class="subtitle">Questionnaire bien-être intelligent</p>
 
 <section>
 <h2>💤 Sommeil</h2>
 
-<div class="block">
-<label>Qualité du sommeil</label>
-<input type="range" min="0" max="10" value="5">
-<div class="value">5 / 10</div>
+<div class="question" data-points="0">
+<p>As-tu dormi moins de 6 heures cette nuit ?</p>
+<div class="answers">
+<button data-value="0">Non</button>
+<button data-value="1">Oui</button>
+</div>
 </div>
 
-<div class="block">
-<label>Fatigue au réveil</label>
-<input type="range" min="0" max="10" value="4">
-<div class="value">4 / 10</div>
+<div class="question" data-points="0">
+<p>T’es-tu réveillé plusieurs fois durant la nuit ?</p>
+<div class="answers">
+<button data-value="0">Non</button>
+<button data-value="1">Oui</button>
+</div>
 </div>
 </section>
 
 <section>
 <h2>🧠 Mental</h2>
 
-<div class="block">
-<label>Stress</label>
-<input type="range" min="0" max="10" value="3">
-<div class="value">3 / 10</div>
+<div class="question" data-points="0">
+<p>Te sens-tu stressé aujourd’hui ?</p>
+<div class="answers">
+<button data-value="0">Pas vraiment</button>
+<button data-value="1">Un peu</button>
+<button data-value="2">Beaucoup</button>
+</div>
 </div>
 
-<div class="block">
-<label>Concentration</label>
-<input type="range" min="0" max="10" value="6">
-<div class="value">6 / 10</div>
+<div class="question" data-points="0">
+<p>As-tu eu du mal à te concentrer ?</p>
+<div class="answers">
+<button data-value="0">Non</button>
+<button data-value="1">Oui</button>
+</div>
 </div>
 </section>
 
 <section>
 <h2>💪 Physique</h2>
 
-<div class="block">
-<label>Douleurs corporelles</label>
-<input type="range" min="0" max="10" value="2">
-<div class="value">2 / 10</div>
+<div class="question" data-points="0">
+<p>As-tu ressenti des douleurs physiques ?</p>
+<div class="answers">
+<button data-value="0">Non</button>
+<button data-value="1">Légères</button>
+<button data-value="2">Importantes</button>
+</div>
 </div>
 
-<div class="block">
-<label>Niveau d’énergie</label>
-<input type="range" min="0" max="10" value="6">
-<div class="value">6 / 10</div>
+<div class="question" data-points="0">
+<p>Te sens-tu fatigué sans raison claire ?</p>
+<div class="answers">
+<button data-value="0">Non</button>
+<button data-value="1">Oui</button>
+</div>
 </div>
 </section>
 
 <section>
-<h2>📊 État global</h2>
+<h2>📊 Résultat global</h2>
 
 <div class="bar"><div class="bar-fill" id="bar"></div></div>
-<div class="level" id="level">Évaluation en cours</div>
+<div class="level" id="level">En attente de réponses</div>
 
 <div class="message" id="message">
-Ajuste les curseurs pour voir ton état.
+Réponds aux questions pour obtenir une analyse.
 </div>
 
-<ul id="advice"></ul>
-
-<button onclick="resetAll()">Réinitialiser</button>
+<button class="reset" onclick="resetAll()">Réinitialiser</button>
 </section>
 
 <div class="footer">
-Outil de bien-être – ne remplace pas un avis professionnel
+Outil informatif – ne remplace pas un avis professionnel
 </div>
 </div>
 
 <script>
-const inputs=document.querySelectorAll("input");
+const questions=document.querySelectorAll(".question");
 const bar=document.getElementById("bar");
 const level=document.getElementById("level");
 const message=document.getElementById("message");
-const advice=document.getElementById("advice");
 
-inputs.forEach(i=>{
-  const v=i.nextElementSibling;
-  i.oninput=()=>{
-    v.textContent=i.value+" / 10";
-    update();
-  };
+questions.forEach(q=>{
+  const buttons=q.querySelectorAll("button");
+  buttons.forEach(b=>{
+    b.onclick=()=>{
+      buttons.forEach(x=>x.classList.remove("active"));
+      b.classList.add("active");
+      q.dataset.points=b.dataset.value;
+      update();
+    };
+  });
 });
 
 function update(){
-  let sum=0;
-  inputs.forEach(i=>sum+=Number(i.value));
-  let score=Math.round((sum/(inputs.length*10))*100);
+  let total=0;
+  questions.forEach(q=>total+=Number(q.dataset.points));
 
-  bar.style.width=score+"%";
+  let max=questions.length*2;
+  let percent=Math.round((total/max)*100);
 
-  advice.innerHTML="";
+  bar.style.width=percent+"%";
 
-  if(score<35){
+  if(percent<30){
     bar.style.background="#22c55e";
-    level.textContent="🟢 Bon équilibre";
-    message.textContent="Ton état général est bon.";
-    advice.innerHTML+="<li>Continue à maintenir ce rythme</li>";
+    level.textContent="🟢 État stable";
+    message.textContent="Aucun signal inquiétant détecté.";
   }
-  else if(score<65){
+  else if(percent<60){
     bar.style.background="#f59e0b";
-    level.textContent="🟠 Équilibre fragile";
-    message.textContent="Quelques ajustements sont conseillés.";
-    advice.innerHTML+="<li>Améliorer le sommeil</li>";
-    advice.innerHTML+="<li>Faire des pauses régulières</li>";
+    level.textContent="🟠 Attention";
+    message.textContent="Quelques signes de fatigue ou stress.";
   }
   else{
     bar.style.background="#ef4444";
-    level.textContent="🔴 Surcharge détectée";
-    message.textContent="Ton corps ou ton mental montre des signes de fatigue.";
-    advice.innerHTML+="<li>Repos prioritaire</li>";
-    advice.innerHTML+="<li>Réduire le stress et les écrans</li>";
+    level.textContent="🔴 Surcharge";
+    message.textContent="Ton corps ou ton mental montrent des signes clairs de difficulté.";
   }
 }
 
 function resetAll(){
-  inputs.forEach(i=>{
-    i.value=5;
-    i.nextElementSibling.textContent="5 / 10";
+  questions.forEach(q=>{
+    q.dataset.points=0;
+    q.querySelectorAll("button").forEach(b=>b.classList.remove("active"));
   });
   bar.style.width="0%";
-  level.textContent="Évaluation réinitialisée";
-  message.textContent="Ajuste les curseurs.";
-  advice.innerHTML="";
+  level.textContent="Réinitialisé";
+  message.textContent="Réponds aux questions.";
 }
 </script>
 
 </body>
 </html>
+
+
