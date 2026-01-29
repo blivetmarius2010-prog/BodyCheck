@@ -45,7 +45,7 @@ h2{margin-bottom:10px}
   margin-bottom:10px;
 }
 
-.question p{margin-bottom:8px}
+.question p{margin-bottom:8px;font-size:.95em}
 
 .answers button{
   width:100%;
@@ -83,9 +83,10 @@ h2{margin-bottom:10px}
 
 .message{
   margin-top:10px;
-  padding:12px;
+  padding:14px;
   border-radius:16px;
   background:rgba(0,0,0,.3);
+  font-size:.9em;
 }
 
 button.reset{
@@ -112,13 +113,14 @@ button.reset{
 
 <div class="app">
 <h1>🧠 BodyCheck</h1>
-<p class="subtitle">Questionnaire bien-être intelligent</p>
+<p class="subtitle">Analyse basée sur des réponses concrètes</p>
 
+<!-- SOMMEIL -->
 <section>
 <h2>💤 Sommeil</h2>
 
 <div class="question" data-points="0">
-<p>As-tu dormi moins de 6 heures cette nuit ?</p>
+<p>Dormir moins de 6 heures cette nuit ?</p>
 <div class="answers">
 <button data-value="0">Non</button>
 <button data-value="1">Oui</button>
@@ -126,7 +128,15 @@ button.reset{
 </div>
 
 <div class="question" data-points="0">
-<p>T’es-tu réveillé plusieurs fois durant la nuit ?</p>
+<p>Réveils nocturnes fréquents ?</p>
+<div class="answers">
+<button data-value="0">Non</button>
+<button data-value="1">Oui</button>
+</div>
+</div>
+
+<div class="question" data-points="0">
+<p>Sensation de sommeil non réparateur ?</p>
 <div class="answers">
 <button data-value="0">Non</button>
 <button data-value="1">Oui</button>
@@ -134,20 +144,29 @@ button.reset{
 </div>
 </section>
 
+<!-- MENTAL -->
 <section>
 <h2>🧠 Mental</h2>
 
 <div class="question" data-points="0">
-<p>Te sens-tu stressé aujourd’hui ?</p>
+<p>Stress ressenti aujourd’hui ?</p>
 <div class="answers">
-<button data-value="0">Pas vraiment</button>
-<button data-value="1">Un peu</button>
-<button data-value="2">Beaucoup</button>
+<button data-value="0">Non</button>
+<button data-value="1">Modéré</button>
+<button data-value="2">Élevé</button>
 </div>
 </div>
 
 <div class="question" data-points="0">
-<p>As-tu eu du mal à te concentrer ?</p>
+<p>Difficulté à se concentrer ?</p>
+<div class="answers">
+<button data-value="0">Non</button>
+<button data-value="1">Oui</button>
+</div>
+</div>
+
+<div class="question" data-points="0">
+<p>Sensation d’anxiété ou de tension intérieure ?</p>
 <div class="answers">
 <button data-value="0">Non</button>
 <button data-value="1">Oui</button>
@@ -155,11 +174,12 @@ button.reset{
 </div>
 </section>
 
+<!-- PHYSIQUE -->
 <section>
 <h2>💪 Physique</h2>
 
 <div class="question" data-points="0">
-<p>As-tu ressenti des douleurs physiques ?</p>
+<p>Douleurs musculaires ou articulaires ?</p>
 <div class="answers">
 <button data-value="0">Non</button>
 <button data-value="1">Légères</button>
@@ -168,7 +188,15 @@ button.reset{
 </div>
 
 <div class="question" data-points="0">
-<p>Te sens-tu fatigué sans raison claire ?</p>
+<p>Fatigue persistante sans effort important ?</p>
+<div class="answers">
+<button data-value="0">Non</button>
+<button data-value="1">Oui</button>
+</div>
+</div>
+
+<div class="question" data-points="0">
+<p>Maux de tête aujourd’hui ?</p>
 <div class="answers">
 <button data-value="0">Non</button>
 <button data-value="1">Oui</button>
@@ -176,21 +204,51 @@ button.reset{
 </div>
 </section>
 
+<!-- MODE DE VIE -->
 <section>
-<h2>📊 Résultat global</h2>
+<h2>🥗 Mode de vie</h2>
+
+<div class="question" data-points="0">
+<p>Hydratation insuffisante (peu bu aujourd’hui) ?</p>
+<div class="answers">
+<button data-value="0">Non</button>
+<button data-value="1">Oui</button>
+</div>
+</div>
+
+<div class="question" data-points="0">
+<p>Repas sautés ou très déséquilibrés ?</p>
+<div class="answers">
+<button data-value="0">Non</button>
+<button data-value="1">Oui</button>
+</div>
+</div>
+
+<div class="question" data-points="0">
+<p>Peu ou pas d’activité physique récente ?</p>
+<div class="answers">
+<button data-value="0">Non</button>
+<button data-value="1">Oui</button>
+</div>
+</div>
+</section>
+
+<!-- RESULTAT -->
+<section>
+<h2>📊 Analyse globale</h2>
 
 <div class="bar"><div class="bar-fill" id="bar"></div></div>
-<div class="level" id="level">En attente de réponses</div>
+<div class="level" id="level">En attente</div>
 
 <div class="message" id="message">
-Réponds aux questions pour obtenir une analyse.
+Réponds aux questions pour obtenir une analyse détaillée.
 </div>
 
 <button class="reset" onclick="resetAll()">Réinitialiser</button>
 </section>
 
 <div class="footer">
-Outil informatif – ne remplace pas un avis professionnel
+Outil informatif – ne remplace pas un avis médical
 </div>
 </div>
 
@@ -201,10 +259,9 @@ const level=document.getElementById("level");
 const message=document.getElementById("message");
 
 questions.forEach(q=>{
-  const buttons=q.querySelectorAll("button");
-  buttons.forEach(b=>{
+  q.querySelectorAll("button").forEach(b=>{
     b.onclick=()=>{
-      buttons.forEach(x=>x.classList.remove("active"));
+      q.querySelectorAll("button").forEach(x=>x.classList.remove("active"));
       b.classList.add("active");
       q.dataset.points=b.dataset.value;
       update();
@@ -215,26 +272,27 @@ questions.forEach(q=>{
 function update(){
   let total=0;
   questions.forEach(q=>total+=Number(q.dataset.points));
-
   let max=questions.length*2;
   let percent=Math.round((total/max)*100);
-
   bar.style.width=percent+"%";
 
-  if(percent<30){
+  if(percent<25){
     bar.style.background="#22c55e";
-    level.textContent="🟢 État stable";
-    message.textContent="Aucun signal inquiétant détecté.";
+    level.textContent="🟢 État global satisfaisant";
+    message.textContent=
+      "Aucun signal préoccupant majeur n’a été détecté. Ton état général semble stable. Continue à maintenir de bonnes habitudes de sommeil, d’hydratation et d’équilibre mental.";
   }
-  else if(percent<60){
+  else if(percent<55){
     bar.style.background="#f59e0b";
-    level.textContent="🟠 Attention";
-    message.textContent="Quelques signes de fatigue ou stress.";
+    level.textContent="🟠 État à surveiller";
+    message.textContent=
+      "Plusieurs signaux indiquent une fatigue physique ou mentale. Il serait bénéfique de ralentir le rythme, d’améliorer le repos et de porter attention à ton hygiène de vie.";
   }
   else{
     bar.style.background="#ef4444";
-    level.textContent="🔴 Surcharge";
-    message.textContent="Ton corps ou ton mental montrent des signes clairs de difficulté.";
+    level.textContent="🔴 Charge élevée";
+    message.textContent=
+      "De nombreux indicateurs sont présents. Cela peut refléter un état de surcharge, de stress ou d’épuisement. Un repos sérieux est conseillé, et si ces signes persistent, un avis professionnel peut être pertinent.";
   }
 }
 
@@ -245,11 +303,13 @@ function resetAll(){
   });
   bar.style.width="0%";
   level.textContent="Réinitialisé";
-  message.textContent="Réponds aux questions.";
+  message.textContent="Réponds aux questions pour lancer l’analyse.";
 }
 </script>
 
 </body>
 </html>
+
+
 
 
